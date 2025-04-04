@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import DashboardLayoutBasic from './components/DashboardLayoutBasic';
 import Home from './pages/Home';
 import Members from './pages/MembersPage';
-import Events from './pages/Events';
+import Events from './pages/EventsPage';
 import Contributions from './pages/Contributions';
-import Reports from './pages/Reports';
+import Reports from './pages/ReportsPage';
 
 function App() {
   return (
