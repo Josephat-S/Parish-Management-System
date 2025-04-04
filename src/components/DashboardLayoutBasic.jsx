@@ -9,6 +9,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import Grid from '@mui/material/Grid';
+import { NavLink } from 'react-router-dom';
 
 const NAVIGATION = [
   {
@@ -95,10 +96,7 @@ const Skeleton = styled('div')(({ theme, height }) => ({
 
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
-
   const router = useDemoRouter('/dashboard');
-
-  // Remove this const when copying and pasting into your project.
   const demoWindow = window ? window() : undefined;
 
   return (
@@ -111,39 +109,17 @@ export default function DashboardLayoutBasic(props) {
       <DashboardLayout>
         <PageContainer>
           <Grid container spacing={1}>
-            <Grid size={5} />
-            <Grid size={12}>
+            <Grid item xs={12}>
+              <NavLink to="/">Home</NavLink>
+              <NavLink to="/members">Members</NavLink>
+              <NavLink to="/events">Events</NavLink>
+              <NavLink to="/contributions">Contributions</NavLink>
+              <NavLink to="/reports">Reports</NavLink>
+            </Grid>
+            <Grid item xs={12}>
               <Skeleton height={14} />
             </Grid>
-            <Grid size={12}>
-              <Skeleton height={14} />
-            </Grid>
-            <Grid size={4}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={8}>
-              <Skeleton height={100} />
-            </Grid>
-
-            <Grid size={12}>
-              <Skeleton height={150} />
-            </Grid>
-            <Grid size={12}>
-              <Skeleton height={14} />
-            </Grid>
-
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid size={3}>
-              <Skeleton height={100} />
-            </Grid>
+            {/* Add more layout elements */}
           </Grid>
         </PageContainer>
       </DashboardLayout>
