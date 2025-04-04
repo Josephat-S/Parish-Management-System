@@ -8,15 +8,15 @@ import Reports from './pages/Reports';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<DashboardLayoutBasic />}>
-        <Route index element={<Home />} />
-        <Route path="members" element={<Members />} />
-        <Route path="events" element={<Events />} />
-        <Route path="contributions" element={<Contributions />} />
-        <Route path="reports" element={<Reports />} />
-      </Route>
-    </Routes>
+    <DashboardLayoutBasic>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/members" element={<Members />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/contributions" element={<Contributions />} />
+        <Route path="/reports" element={<Reports />} />
+      </Routes>
+    </DashboardLayoutBasic>
   );
 }
 

@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+/* Add to App.css or equivalent */
+.MuiDrawer-root .MuiTypography-root {
+  font-weight: bold;
+}
+
+.MuiDrawer-root .MuiTypography-root::before {
+  content: "Parish Management System";
+  color: #fff;
+  font-size: 1.2rem;
+  display: block;
+  white-space: nowrap;
+}
+
+/* Hide original Toolpad text */
+.MuiDrawer-root .MuiTypography-root > * {
+  display: none !important;
+}

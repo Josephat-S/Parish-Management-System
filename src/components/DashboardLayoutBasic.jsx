@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createTheme, styled } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -9,7 +9,7 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import Grid from '@mui/material/Grid';
-import { NavLink } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
 
 const NAVIGATION = [
   {
@@ -87,39 +87,34 @@ function useDemoRouter(initialPath) {
   return router;
 }
 
-const Skeleton = styled('div')(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-}));
-
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
+
   const router = useDemoRouter('/dashboard');
+
   const demoWindow = window ? window() : undefined;
 
   return (
     <AppProvider
       navigation={NAVIGATION}
+      branding={{
+        title: 'Parish Management System',
+        // You can also add a logo and homeUrl if needed
+        // logo: <YourLogoComponent />,
+        // homeUrl: '/',
+      }}
       router={router}
       theme={demoTheme}
       window={demoWindow}
     >
       <DashboardLayout>
         <PageContainer>
+          {/* Your page content goes here */}
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+            Welcome to the Parish Management System
+          </Typography>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <NavLink to="/">Home</NavLink>
-              <NavLink to="/members">Members</NavLink>
-              <NavLink to="/events">Events</NavLink>
-              <NavLink to="/contributions">Contributions</NavLink>
-              <NavLink to="/reports">Reports</NavLink>
-            </Grid>
-            <Grid item xs={12}>
-              <Skeleton height={14} />
-            </Grid>
-            {/* Add more layout elements */}
+            {/* Your grid items */}
           </Grid>
         </PageContainer>
       </DashboardLayout>
