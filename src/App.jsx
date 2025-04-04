@@ -3,7 +3,7 @@ import DashboardLayoutBasic from './components/DashboardLayoutBasic';
 import Home from './pages/Home';
 import Members from './pages/MembersPage';
 import Events from './pages/EventsPage';
-import Contributions from './pages/Contributions';
+import Contributions from './pages/ContributionsPage';
 import Reports from './pages/ReportsPage';
 
 function App() {
