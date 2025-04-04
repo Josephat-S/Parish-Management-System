@@ -1,30 +1,42 @@
 import * as React from 'react';
 import { createTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PeopleIcon from '@mui/icons-material/People';
+import EventIcon from '@mui/icons-material/Event';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
+import ChurchIcon from '@mui/icons-material/Church'; // Importing church icon
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 
 const NAVIGATION = [
   {
     kind: 'header',
-    title: 'Main items',
+    title: 'Main Menu',
   },
   {
-    segment: 'dashboard',
+    segment: 'home',
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
   {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
+    segment: 'members',
+    title: 'Members',
+    icon: <PeopleIcon />,
+  },
+  {
+    segment: 'events',
+    title: 'Events',
+    icon: <EventIcon />,
+  },
+  {
+    segment: 'contributions',
+    title: 'Contributions',
+    icon: <AttachMoneyIcon />,
   },
   {
     kind: 'divider',
@@ -37,23 +49,6 @@ const NAVIGATION = [
     segment: 'reports',
     title: 'Reports',
     icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
-      },
-    ],
-  },
-  {
-    segment: 'integrations',
-    title: 'Integrations',
-    icon: <LayersIcon />,
   },
 ];
 
@@ -90,18 +85,22 @@ function useDemoRouter(initialPath) {
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
 
-  const router = useDemoRouter('/dashboard');
-
+  const router = useDemoRouter('/home'); // Default path set to /home
   const demoWindow = window ? window() : undefined;
+
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500); // Simulate load
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <AppProvider
       navigation={NAVIGATION}
       branding={{
         title: 'Parish Management System',
-        // You can also add a logo and homeUrl if needed
-        // logo: <YourLogoComponent />,
-        // homeUrl: '/',
+        logo: <ChurchIcon fontSize="large" />, // Church icon as logo
       }}
       router={router}
       theme={demoTheme}
@@ -109,13 +108,27 @@ export default function DashboardLayoutBasic(props) {
     >
       <DashboardLayout>
         <PageContainer>
-          {/* Your page content goes here */}
-          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-            Welcome to the Parish Management System
-          </Typography>
-          <Grid container spacing={1}>
-            {/* Your grid items */}
-          </Grid>
+          {loading ? (
+            <>
+              <Skeleton variant="text" width={300} height={40} />
+              <Grid container spacing={2}>
+                {[1, 2, 3].map((item) => (
+                  <Grid item xs={12} md={4} key={item}>
+                    <Skeleton variant="rectangular" width="100%" height={140} />
+                  </Grid>
+                ))}
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+                Welcome to the Parish Management System
+              </Typography>
+              <Grid container spacing={1}>
+                {/* Your grid items */}
+              </Grid>
+            </>
+          )}
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
