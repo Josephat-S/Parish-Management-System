@@ -5,13 +5,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import ChurchIcon from '@mui/icons-material/Church'; // Importing church icon
+import { Church } from '@mui/icons-material';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Skeleton from '@mui/material/Skeleton';
+import HomePage from '../pages/HomePage';
 
 const NAVIGATION = [
   {
@@ -84,23 +82,15 @@ function useDemoRouter(initialPath) {
 
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
-
-  const router = useDemoRouter('/home'); // Default path set to /home
+  const router = useDemoRouter('/home');
   const demoWindow = window ? window() : undefined;
-
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500); // Simulate load
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <AppProvider
       navigation={NAVIGATION}
       branding={{
         title: 'Parish Management System',
-        logo: <ChurchIcon fontSize="large" />, // Church icon as logo
+        logo: <Church fontSize="large" />, // ✅ Custom logo icon
       }}
       router={router}
       theme={demoTheme}
@@ -108,27 +98,8 @@ export default function DashboardLayoutBasic(props) {
     >
       <DashboardLayout>
         <PageContainer>
-          {loading ? (
-            <>
-              <Skeleton variant="text" width={300} height={40} />
-              <Grid container spacing={2}>
-                {[1, 2, 3].map((item) => (
-                  <Grid item xs={12} md={4} key={item}>
-                    <Skeleton variant="rectangular" width="100%" height={140} />
-                  </Grid>
-                ))}
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-                Welcome to the Parish Management System
-              </Typography>
-              <Grid container spacing={1}>
-                {/* Your grid items */}
-              </Grid>
-            </>
-          )}
+          {/* ✅ Page content is now loaded from HomePage */}
+          <HomePage />
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
