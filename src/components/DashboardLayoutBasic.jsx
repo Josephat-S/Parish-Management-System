@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
@@ -10,6 +11,10 @@ import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import HomePage from '../pages/HomePage';
+import MembersPage from '../pages/MembersPage';
+import EventsPage from '../pages/EventsPage';
+import ContributionsPage from '../pages/ContributionsPage';
+import ReportsPage from '../pages/ReportsPage';
 
 const NAVIGATION = [
   {
@@ -66,23 +71,8 @@ const demoTheme = createTheme({
   },
 });
 
-function useDemoRouter(initialPath) {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
-
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
-  const router = useDemoRouter('/home');
   const demoWindow = window ? window() : undefined;
 
   return (
@@ -92,14 +82,19 @@ export default function DashboardLayoutBasic(props) {
         title: 'Parish Management System',
         logo: <Church fontSize="large" />, // ✅ Custom logo icon
       }}
-      router={router}
       theme={demoTheme}
       window={demoWindow}
     >
       <DashboardLayout>
         <PageContainer>
-          {/* ✅ Page content is now loaded from HomePage */}
-          <HomePage />
+          <Routes>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/members" element={<MembersPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/contributions" element={<ContributionsPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="*" element={<HomePage />} /> {/* Fallback route */}
+          </Routes>
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
