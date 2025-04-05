@@ -12,6 +12,8 @@ import Skeleton from '@mui/material/Skeleton';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]); // State for filtered events
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [loading, setLoading] = useState(true); // Loading state
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openViewDialog, setOpenViewDialog] = useState(false);
@@ -25,11 +27,14 @@ const EventsPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [preview, setPreview] = useState(null); // For image preview
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State for delete confirmation dialog
+  const [eventToDelete, setEventToDelete] = useState(null); // Store the event to be deleted
+  const [selectedEventIds, setSelectedEventIds] = useState([]); // State to store selected event IDs
 
   // Simulate data fetching
   useEffect(() => {
     setTimeout(() => {
-      setEvents([
+      const fetchedEvents = [
         {
           id: 1,
           title: 'Community Meeting',
@@ -110,7 +115,9 @@ const EventsPage = () => {
           location: 'Community Hall',
           picture: null,
         },
-      ]);
+      ];
+      setEvents(fetchedEvents);
+      setFilteredEvents(fetchedEvents); // Initialize filtered events
       setLoading(false); // Stop loading after data is fetched
     }, 2000); // Simulate a 2-second delay
   }, []);
@@ -153,18 +160,45 @@ const EventsPage = () => {
   };
   const handleCloseViewDialog = () => setOpenViewDialog(false);
 
+  // Handle opening the delete confirmation dialog for single or multiple events
+  const handleOpenDeleteDialog = (id = null) => {
+    if (id) {
+      setEventToDelete(id); // For single event deletion
+    }
+    setOpenDeleteDialog(true);
+  };
+
+  // Handle closing the delete confirmation dialog
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setEventToDelete(null);
+  };
+
+  // Handle deleting a single or multiple events after confirmation
+  const confirmDeleteEvent = () => {
+    if (eventToDelete) {
+      // Single event deletion
+      const updatedEvents = events.filter((event) => event.id !== eventToDelete);
+      setEvents(updatedEvents);
+      setFilteredEvents(updatedEvents); // Update filtered events
+    } else if (selectedEventIds.length > 0) {
+      // Multiple events deletion
+      const updatedEvents = events.filter((event) => !selectedEventIds.includes(event.id));
+      setEvents(updatedEvents);
+      setFilteredEvents(updatedEvents); // Update filtered events
+    }
+    setSelectedEventIds([]); // Clear selected IDs
+    handleCloseDeleteDialog(); // Close the dialog
+  };
+
   // Handle adding a new event
   const handleAddEvent = () => {
     if (!validateForm()) return;
 
     const newId = events.length > 0 ? events[events.length - 1].id + 1 : 1;
     setEvents([...events, { id: newId, ...newEvent, picture: preview }]);
+    setFilteredEvents([...events, { id: newId, ...newEvent, picture: preview }]); // Update filtered events
     handleCloseAddDialog();
-  };
-
-  // Handle deleting an event
-  const handleDeleteEvent = (id) => {
-    setEvents(events.filter((event) => event.id !== id));
   };
 
   // Handle image upload and preview
@@ -178,6 +212,24 @@ const EventsPage = () => {
     }
   };
 
+  // Handle selection change in DataGrid
+  const handleSelectionChange = (selectionModel) => {
+    setSelectedEventIds(selectionModel);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = events.filter(
+      (event) =>
+        event.title.toLowerCase().includes(query) ||
+        event.description.toLowerCase().includes(query) ||
+        event.location.toLowerCase().includes(query)
+    );
+    setFilteredEvents(filtered);
+  };
+
   // Columns for DataGrid
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -185,21 +237,6 @@ const EventsPage = () => {
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'date', headerName: 'Date', width: 150 },
     { field: 'location', headerName: 'Location', width: 200 },
-    {
-      field: 'picture',
-      headerName: 'Picture',
-      width: 150,
-      renderCell: (params) =>
-        params.row.picture ? (
-          <img
-            src={params.row.picture}
-            alt="Event"
-            style={{ width: '100%', height: '50px', objectFit: 'cover' }}
-          />
-        ) : (
-          'No Image'
-        ),
-    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -217,7 +254,7 @@ const EventsPage = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleDeleteEvent(params.row.id)}
+            onClick={() => handleOpenDeleteDialog(params.row.id)}
           >
             Delete
           </Button>
@@ -240,15 +277,26 @@ const EventsPage = () => {
       >
         Add New Event
       </Button>
+      <TextField
+        label="Search Events"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={searchQuery}
+        onChange={handleSearchChange}
+        placeholder="Search by title, description, or location"
+      />
       <div style={{ height: 400, width: '100%' }}>
         {loading ? (
           <Skeleton variant="rectangular" width="100%" height={400} />
         ) : (
           <DataGrid
-            rows={events}
+            rows={filteredEvents} // Use filtered events for the table
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
+            checkboxSelection // Enable checkbox selection
+            onSelectionModelChange={handleSelectionChange} // Handle selection changes
             disableRowSelectionOnClick
           />
         )}
@@ -357,6 +405,30 @@ const EventsPage = () => {
         <DialogActions>
           <Button onClick={handleCloseViewDialog} color="primary">
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete{' '}
+            {eventToDelete
+              ? 'this event'
+              : selectedEventIds.length > 1
+              ? 'these events'
+              : 'this event'}
+            ?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteEvent} color="secondary">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
