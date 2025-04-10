@@ -32,6 +32,9 @@ const MembersPage = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedMemberToDelete, setSelectedMemberToDelete] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]); // State to track selected rows
 
   // Simulate data fetching
   useEffect(() => {
@@ -81,6 +84,39 @@ const MembersPage = () => {
     setOpenViewDialog(true);
   };
   const handleCloseViewDialog = () => setOpenViewDialog(false);
+
+  const handleOpenDeleteDialog = (member) => {
+    setSelectedMemberToDelete(member);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setSelectedMemberToDelete(null);
+    setOpenDeleteDialog(false);
+  };
+
+  const confirmDeleteMember = () => {
+    setMembers(members.filter((member) => member.id !== selectedMemberToDelete.id));
+    handleCloseDeleteDialog();
+  };
+
+  // Handle selection change
+  const handleSelectionChange = (selectionModel) => {
+    setSelectedRows(selectionModel);
+  };
+
+  // Delete selected rows
+  const handleDeleteSelectedRows = () => {
+    if (selectedRows.length === 0) {
+      alert('No rows selected.');
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to delete ${selectedRows.length} selected members?`)) {
+      setMembers(members.filter((member) => !selectedRows.includes(member.id)));
+      setSelectedRows([]);
+    }
+  };
 
   // Validation functions
   const validateName = (name) => /^[a-zA-Z\s]+$/.test(name); // Only letters and spaces allowed
@@ -159,11 +195,6 @@ const MembersPage = () => {
       password: '',
     });
     setErrors({});
-  };
-
-  // Handle deleting a member
-  const handleDeleteMember = (id) => {
-    setMembers(members.filter((member) => member.id !== id));
   };
 
   return (
@@ -248,7 +279,7 @@ const MembersPage = () => {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleDeleteMember(params.row.id)}
+                      onClick={() => handleOpenDeleteDialog(params.row)}
                     >
                       Delete
                     </Button>
@@ -256,6 +287,8 @@ const MembersPage = () => {
                 ),
               },
             ]}
+            checkboxSelection // Enable checkbox selection
+            onSelectionModelChange={handleSelectionChange} // Track selected rows
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
           />
@@ -366,6 +399,25 @@ const MembersPage = () => {
         <DialogActions>
           <Button onClick={handleCloseViewDialog} color="primary">
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog} fullWidth maxWidth="xs">
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete{' '}
+            <strong>{selectedMemberToDelete?.name}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteMember} color="secondary">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
