@@ -126,6 +126,7 @@ const EventsPage = () => {
   const validateTitleAndLocation = (value) => /^[a-zA-Z\s]+$/.test(value); // Only letters and spaces allowed
   const validateForm = () => {
     const newErrors = {};
+
     if (!newEvent.title) {
       newErrors.title = 'Title is required.';
     } else if (!validateTitleAndLocation(newEvent.title)) {
@@ -139,6 +140,16 @@ const EventsPage = () => {
       newErrors.location = 'Location is required.';
     } else if (!validateTitleAndLocation(newEvent.location)) {
       newErrors.location = 'Location can only contain letters and spaces.';
+    }
+
+    // Validate image file
+    if (!newEvent.picture) {
+      newErrors.picture = 'An image is required.';
+    } else {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(newEvent.picture.type)) {
+        newErrors.picture = 'Only JPEG and PNG file types are allowed.';
+      }
     }
 
     setErrors(newErrors);
@@ -205,10 +216,17 @@ const EventsPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        setErrors({ ...errors, picture: 'Only JPEG and PNG file types are allowed.' });
+        return;
+      }
+
       setNewEvent({ ...newEvent, picture: file });
       const reader = new FileReader();
       reader.onload = () => setPreview(reader.result);
       reader.readAsDataURL(file);
+      setErrors({ ...errors, picture: null }); // Clear image error if valid
     }
   };
 
@@ -361,6 +379,11 @@ const EventsPage = () => {
                 cursor: 'pointer',
               }}
             />
+            {errors.picture && (
+              <Typography variant="body2" color="error">
+                {errors.picture}
+              </Typography>
+            )}
             {preview && (
               <div style={{ marginTop: '16px' }}>
                 <Typography variant="body2">Preview:</Typography>
