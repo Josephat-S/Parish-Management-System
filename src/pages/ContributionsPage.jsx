@@ -11,6 +11,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
+import AddIcon from '@mui/icons-material/Add'; // Import the AddIcon component
 
 const ContributionsPage = () => {
   const [contributions, setContributions] = useState([]);
@@ -187,6 +188,18 @@ const ContributionsPage = () => {
       <Typography variant="h5" gutterBottom>
         Financial Contributions
       </Typography>
+
+      {/* Add New Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleOpenAddDialog}
+        style={{ marginBottom: '16px' }}
+        startIcon={<AddIcon />} // Add the plus icon to the button
+      >
+        Add New
+      </Button>
+
       {loading ? (
         <Skeleton variant="rectangular" width="100%" height={400} />
       ) : (
